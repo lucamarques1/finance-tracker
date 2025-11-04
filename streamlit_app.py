@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib as plt
 from supabase import create_client, Client
 
 st.set_page_config(
@@ -21,9 +20,6 @@ st.write(
 
 
 #INIT SUPABASE
-email = st.text_input("Email")
-password = st.text_input("Password")
-
 if "user" not in st.session_state:
     st.session_state.user = None
 
