@@ -13,7 +13,7 @@ key = st.secrets["supabase"]["key"]
 supabase: Client = create_client(url, key)
 
 # Title
-st.title("💹 PerFin Dashboard")
+st.title(" PerFin Dashboard")
 st.write(
     "Please log in with your Account to see your data."
 )
@@ -34,7 +34,7 @@ with col1:
             st.session_state.user = res.user
             st.success("✅ Logged in successfully!")
             st.switch_page("pages/dashboard.py")
-        except Exceptions as e:
+        except Exception as e:
             st.error("❌ Invalid credentials or unverified email.")
 
 with col2:
@@ -42,5 +42,5 @@ with col2:
         try:
             supabase.auth.sign_up({"email": email, "password":password})
             st.info("Account created! Check your email for verification.")
-        except Exceptions as e:
-            st.error(f"Error{e}")
+        except Exception as e:
+            st.error(f"Error {e}")
