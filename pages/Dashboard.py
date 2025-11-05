@@ -9,16 +9,21 @@ st.set_page_config(
 st.title("Welcome to your Dashboard")
 
 # --- SUPABASE SETUP ---
-url = st.secrets["supabase"]["url"]
-key = st.secrets["supabase"]["key"]
-supabase = create_client(url, key)
+url: str = st.secrets["supabase"]["url"]
+key: str = st.secrets["supabase"]["key"]
+supabase: Client = create_client(url, key)
 
-if "user" not in st.session_state or st.session_state.user is None:
-    st.warning("Please log in first!")
+
+if "access_token" in st.session_state:
+    supabase.postgrest.auth(st.session_state.access_token)
+else:
+    st.warning("Please log in first.")
     st.stop()
+
 
 user = st.session_state.user
 user_id = user.id
+
 
 categories = ["Food", "Rent", "Transport", "Entertainment", "Shopping", "Health", "Savings", "Other"]
 with st.form("New Transaction"):
@@ -32,12 +37,13 @@ with st.form("New Transaction"):
 
     if submitted: 
         data = {
-            "user_id": user_id,
+            "user_id": st.session_state.user.id,
             "date": str(date),
             "category": category,
             "amount": amount,
-            "description": description,
+            "description": description
         }
+
 
         try: 
             supabase.table("transactions").insert(data).execute()

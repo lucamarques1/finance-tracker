@@ -1,20 +1,22 @@
 import streamlit as st
 import pandas as pd
 from supabase import create_client, Client
+import os
 
 st.set_page_config(
     page_title="PerFin Log In",
     page_icon="💰"
 )
+supabase_url = st.secrets["supabase"]["url"]
+supabase_key = st.secrets["supabase"]["key"]
 
-# Connect to supabase securely
-url = st.secrets["supabase"]["url"]
-key = st.secrets["supabase"]["key"]
+url: str = supabase_url
+key: str = supabase_key
+supabase: Client = create_client(url, key)
 
-if "access_token" in st.session_state:
-    supabase =create_client(url, st.session_state.access_token)
-else:
-    supabase = create_client(url, key)  # fallback (not recommended)
+
+
+
 
 # Title
 st.title(" PerFin Dashboard")
@@ -39,7 +41,7 @@ with col1:
             st.session_state.access_token = res.session.access_token
             st.success("✅ Logged in successfully!")
             st.write(f"Access Token: {st.session_state.access_token}")
-            st.switch_page("pages/dashboard.py")
+            st.switch_page("pages/Dashboard.py")
         except Exception as e:
             st.error(f"Error: {e}")
 
