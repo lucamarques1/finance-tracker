@@ -10,7 +10,11 @@ st.set_page_config(
 # Connect to supabase securely
 url = st.secrets["supabase"]["url"]
 key = st.secrets["supabase"]["key"]
-supabase: Client = create_client(url, key)
+
+if "access_token" in st.session_state:
+    supabase =create_client(url, st.session_state.access_token)
+else:
+    supabase = create_client(url, key)  # fallback (not recommended)
 
 # Title
 st.title(" PerFin Dashboard")
@@ -32,10 +36,12 @@ with col1:
         try: 
             res = supabase.auth.sign_in_with_password({"email": email, "password": password})
             st.session_state.user = res.user
+            st.session_state.access_token = res.session.access_token
             st.success("✅ Logged in successfully!")
+            st.write(f"Access Token: {st.session_state.access_token}")
             st.switch_page("pages/dashboard.py")
         except Exception as e:
-            st.error("❌ Invalid credentials or unverified email.")
+            st.error(f"Error: {e}")
 
 with col2:
     if st.button("Sign Up"):
