@@ -3,16 +3,11 @@ import pandas as pd
 from supabase import create_client, Client
 import os
 
-log_in_page = st.Page("streamlit_app.py", title = "Log-In", icon="⚙️")
-insert_transaction_page = st.Page("insert_trans.py", title="Insert Transaction", icon="💸")
 
-pg = st.navigation([log_in_page,insert_transaction_page])
-pg.run()
 
 st.set_page_config(
     page_title="PerFin Log In",
     page_icon="💰",
-    page_name = "Log In"
 )
 supabase_url = st.secrets["supabase"]["url"]
 supabase_key = st.secrets["supabase"]["key"]
@@ -47,7 +42,7 @@ with col1:
             st.session_state.user = res.user
             st.session_state.access_token = res.session.access_token
             st.success("✅ Logged in successfully!")
-            st.switch_page("pages/insert_trans.py")
+            st.switch_page("pages/Insert_Transaction.py")
         except Exception as e:
             st.error(f"Error: {e}")
 
