@@ -59,7 +59,7 @@ reset_password = st.button("Reset Password with Email")
 if reset_password:
     try: 
         supabase.auth.reset_password_email(
-            email, {'redirect_to':'https://'}
+            email, {'redirect_to':'https://perfin-dash.streamlit.app/New_Password'}
         )
     except Exception as e:
         st.error(f"Error: {e}")
