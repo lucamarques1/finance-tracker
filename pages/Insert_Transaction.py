@@ -24,11 +24,10 @@ user_id = user.id
 categories = ["Food", "Rent", "Transport", "Entertainment", "Shopping", "Health", "Savings", "Other"]
 with st.form("New Transaction"):
     st.write("Record your new Transaction")
-    subject = st.text_input("What is the subject of the transaction?")
-    category = st.selectbox("Category", categories)
-    amount = 0 - float(st.number_input("What's the amount?"))
-    date = st.date_input("What's the date of the transaction?")
-    description = st.text_input("Description (optional)")
+    description = st.text_input("What is the matter of the transaction?", key="desc")
+    category = st.selectbox("Category", categories, key = "cat")
+    amount = 0 - float((st.number_input("What's the amount?", key = "amt")))
+    date = st.date_input("What's the date of the transaction?", key = "date")
     submitted = st.form_submit_button("Submit the new transaction!")
 
     if submitted: 
@@ -43,6 +42,8 @@ with st.form("New Transaction"):
 
         try: 
             supabase.table("transactions").insert(data).execute()
+            st.success(f"Success for Transaction: {description}")
+
         except Exception as e:
             st.error(f"Error adding transaction: {e}")
 
