@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 from supabase import create_client, Client
-import os
 
-
+# --- SUPABASE SETUP ---
+url: str = st.secrets["supabase"]["url"]
+key: str = st.secrets["supabase"]["key"]
+supabase: Client = create_client(url, key)
 
 st.set_page_config(
     page_title="PerFin Log In",
@@ -11,13 +13,6 @@ st.set_page_config(
 )
 supabase_url = st.secrets["supabase"]["url"]
 supabase_key = st.secrets["supabase"]["key"]
-
-url: str = supabase_url
-key: str = supabase_key
-supabase: Client = create_client(url, key)
-
-
-
 
 
 # Title

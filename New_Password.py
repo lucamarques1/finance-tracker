@@ -1,5 +1,10 @@
 import streamlit as st
-from supabase import create_client
+from supabase import Client, create_client
+
+ # --- SUPABASE SETUP ---
+url: str = st.secrets["supabase"]["url"]
+key: str = st.secrets["supabase"]["key"]
+supabase: Client = create_client(url, key)
 
 st.set_page_config(
     page_title="Password Reset Page"

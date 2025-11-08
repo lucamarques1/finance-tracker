@@ -4,8 +4,8 @@ from supabase import create_client, Client
 
 st.title("💸 Insert a New Cash Flow")
 
-# --- SUPABASE SETUP ---
-url: str = st.secrets["supabase"]["url"]
+ # --- SUPABASE SETUP ---
+url: str = st.secrets["supabase"]["url"] 
 key: str = st.secrets["supabase"]["key"]
 supabase: Client = create_client(url, key)
 
@@ -48,6 +48,7 @@ with st.form("New Transaction"):
             st.error(f"Error adding transaction: {e}")
 
 
+
 with st.form("New Income"):
     st.write("Record new Cash In-flow")
     subject_2 = st.text_input("What's the Title of the Income")
@@ -68,5 +69,8 @@ with st.form("New Income"):
 
         try:
             supabase.table("transactions").insert(data_2).execute()
+            st.success(f"Success for Income: {description_2}")
         except Exception as e:
             st.error(f"Error adding Income: {e}")
+
+    
