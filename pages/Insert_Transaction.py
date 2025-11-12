@@ -24,11 +24,11 @@ user_id = user.id
 categories = ["Food", "Rent", "Transport", "Entertainment", "Shopping", "Health", "Savings", "Other"]
 with st.form("New Transaction"):
     st.write("Record your new Transaction")
-    description = st.text_input("What is the matter of the transaction?", key="desc")
+    description = st.text_input("What is the matter of the Purchase?", key="desc")
     category = st.selectbox("Category", categories, key = "cat")
     amount = 0 - float((st.number_input("What's the amount?", key = "amt")))
     date = st.date_input("What's the date of the transaction?", key = "date")
-    submitted = st.form_submit_button("Submit the new transaction!")
+    submitted = st.form_submit_button("Submit the new purchase!")
 
     if submitted: 
         data = {
@@ -51,11 +51,10 @@ with st.form("New Transaction"):
 
 with st.form("New Income"):
     st.write("Record new Cash In-flow")
-    subject_2 = st.text_input("What's the Title of the Income")
+    description_2 = st.text_input("What's the Title of the Income")
     category_2 = st.selectbox("Category", ["Parental Help", "Work", "Business"])
     amount_2 = st.number_input("Amount")
     date_2 = st.date_input("Date of the Income")
-    description_2 = st.text_input("Description (optional)")
     submitted_2 = st.form_submit_button("Submit new Income")
 
     if submitted_2:

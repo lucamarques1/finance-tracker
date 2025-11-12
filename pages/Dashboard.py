@@ -108,13 +108,14 @@ elif this_week:
 response = query.execute()
 data = pd.DataFrame(response.data)
 
+
 # KPIs
 
 total_income = data.loc[data["amount"] > 0, "amount"].sum()
 total_expense = data.loc[data["amount"] < 0, "amount"].sum()
 net_profit = total_income + total_expense
-
 savings_rate = float(data.loc[data["category"] == "Savings", "amount"].sum() /  - total_expense) * 100
+
 
 
 if data.empty:
@@ -122,91 +123,50 @@ if data.empty:
     st.stop()
 
 st.header("KPIs")
-st.info(f"Total Income: {total_income}")
-st.info(f"Total Expense: {total_expense}")
-st.info(f"Net Profit: {net_profit}")
-st.info(f"Savings Rate: {savings_rate}%")
+st.info(f"Total Income: € {total_income:,.2f}")
+st.info(f"Total Expense: € {total_expense:,.2f}")
+st.info(f"Net Profit: € {net_profit:,.2f}")
+st.info(f"Savings Rate: {savings_rate} %")
 
 data.columns = [c.lower().strip() for c in data.columns]
 data["amount"] = pd.to_numeric(data["amount"], errors="coerce").fillna(0)
 data["date"] = pd.to_datetime(data["date"], errors="coerce")
 
-st.write("Data preview:", data.head())
+# First Table "DATA PREVIEW":
+wanted = ["date", "description", "category", "amount"]
+cols = [c for c in wanted if c in data.columns]
 
+view = ( 
+    data.loc[:, cols]
+    .assign(date=lambda df: pd.to_datetime(df["date"], errors="coerce").dt.date)
+    .sort_values("date", ascending=False)
+)
+st.dataframe(
+    view,
+    hide_index=True,
+    column_config={
+        "amount": st.column_config.NumberColumn("Amount (€)", format = "€ %.2f"),
+        "date": st.column_config.DateColumn("Date"),
+        "category": st.column_config.TextColumn("Category"),
+        "description": st.column_config.TextColumn("Description"),
+    },
 
-# Pasted from Chat --- VISUALS---
- # --- 1. Income vs Expense Over Time ---
-# ======================================
-# 📊 VISUALIZATIONS
-# ======================================
+)
 
-if not data.empty:
-    data.columns = [c.lower().strip() for c in data.columns]
-    data["amount"] = pd.to_numeric(data["amount"], errors="coerce").fillna(0)
-    data["date"] = pd.to_datetime(data["date"], errors="coerce")
+st.write(data.dtypes)
+st.write("Number of Transactions:", len(data))
 
-    # --- 1. Income vs Expense Over Time ---
-    data["month"] = data["date"].dt.to_period("M").astype(str)
-    data["type"] = np.where(data["amount"] > 0, "Income", "Expense")
-    monthly_summary = data.groupby(["month", "type"])["amount"].sum().reset_index()
-
-    fig1 = px.bar(
-        monthly_summary,
-        x="month",
-        y="amount",
-        color="type",
-        title="💸 Monthly Income vs Expenses",
-        barmode="group",
-        text_auto=".2s"
-    )
-    st.plotly_chart(fig1, use_container_width=True)
-
-    # --- 2. Expense Breakdown by Category ---
-    expense_data = data[data["amount"] < 0]
-    category_summary = expense_data.groupby("category")["amount"].sum().reset_index()
-    category_summary["amount"] = category_summary["amount"].abs()
-
-    fig2 = px.pie(
-        category_summary,
-        names="category",
-        values="amount",
-        title="📊 Expense Breakdown by Category"
-    )
-    st.plotly_chart(fig2, use_container_width=True)
-
-    # --- 3. Cumulative Net Worth ---
-    data = data.sort_values("date")
-    data["cumulative_net"] = data["amount"].cumsum()
-    fig3 = px.line(
-        data,
-        x="date",
-        y="cumulative_net",
-        title="📈 Cumulative Net Worth Over Time"
-    )
-    st.plotly_chart(fig3, use_container_width=True)
-
-    # --- 4. Spending by Weekday ---
-    data["weekday"] = data["date"].dt.day_name()
-    weekday_expenses = (
-        data[data["amount"] < 0]
-        .groupby("weekday")["amount"]
-        .sum()
-        .reindex(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
-        .reset_index()
-    )
-    weekday_expenses["amount"] = weekday_expenses["amount"].abs()
-
-    fig4 = px.bar(
-        weekday_expenses,
-        x="weekday",
-        y="amount",
-        title="🗓 Average Spending by Weekday",
-        text_auto=".2s"
-    )
-    st.plotly_chart(fig4, use_container_width=True)
-
-    # --- 5. Data Table ---
-    st.subheader("📋 Filtered Transactions")
-    st.dataframe(data.sort_values(by="date", ascending=False), use_container_width=True)
-else:
-    st.warning("No transactions found for the selected filters.")
+#Income vs Expense over time
+data["month"] = data["date"].dt.to_period("M").astype(str)
+data["type"] = np.where(data["amount"] > 0, "Income", "Expense")
+monthly_summary = data.groupby(["month", "type"])["amount"].sum().reset_index()
+fig = px.bar(
+    monthly_summary, 
+    x="month",
+    y="amount",
+    color="type",
+    barmode="group",
+    title="Monthly Income vs. Expenses",
+    text_auto=".2s"
+)
+st.plotly_chart(fig, use_container_width=True)
