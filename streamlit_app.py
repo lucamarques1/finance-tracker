@@ -37,7 +37,7 @@ with col1:
             st.session_state.user = res.user
             st.session_state.access_token = res.session.access_token
             st.success("✅ Logged in successfully!")
-            st.switch_page("pages/Insert_Transaction.py")
+            st.switch_page("pages/Dashboard.py")
         except Exception as e:
             st.error(f"Error: {e}")
 
@@ -49,6 +49,10 @@ with col2:
         except Exception as e:
             st.error(f"Error {e}")
 
+
+
+
+# RESET PASSWORD
 reset_password = st.button("Reset Password with Email")
 
 if reset_password:
