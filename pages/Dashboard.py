@@ -170,3 +170,86 @@ fig = px.bar(
     text_auto=".2s"
 )
 st.plotly_chart(fig, use_container_width=True)
+
+# Pie Chart for Categories
+expense_data = data[data["amount"]<0]
+category_summary = (
+    expense_data.groupby("category")["amount"]
+    .sum()
+    .abs()
+    .reset_index()
+)
+
+fig2 = px.pie(
+    category_summary,
+    names="category",
+    values="amount",
+    title="📊 Expense Breakdown by Category"
+)
+st.plotly_chart(fig2, use_container_width=True)
+
+# Cumulative Net Worth Over time
+data = data.sort_values("date")
+data["cumulative_net"] = data["amount"].cumsum()
+
+fig3 = px.line(
+    data,
+    x="date",
+    y="cumulative_net",
+    title="📈 Cumulative Net Worth Over Time"
+)
+st.plotly_chart(fig3, use_container_width=True)
+
+
+# Spending by Weekday
+data["weekday"] = data["date"].dt.day_name()
+
+weekday_expenses = (
+    data[data["amount"] < 0]
+    .groupby("weekday")["amount"]
+    .sum()
+    .abs()
+    .reindex(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
+    .reset_index()
+)
+
+fig4 = px.bar(
+    weekday_expenses,
+    x="weekday",
+    y="amount",
+    title="🗓 Spending by Weekday",
+    text_auto=".2s"
+)
+st.plotly_chart(fig4, use_container_width=True)
+
+#Savings Rate 
+monthly_savings = (
+    monthly_summary
+    .pivot(index="month", columns="type", values="amount")
+    .fillna(0)
+    .reset_index()
+)
+
+monthly_savings["savings_rate"] = (
+    monthly_savings["Income"] + monthly_savings["Expense"]
+) / monthly_savings["Income"] * 100
+
+fig5 = px.line(
+    monthly_savings,
+    x="month",
+    y="savings_rate",
+    title="💾 Monthly Savings Rate Trend (%)"
+)
+st.plotly_chart(fig5, use_container_width=True)
+
+#Income Category Projection
+income_data = data[data["amount"] > 0]
+income_summary = income_data.groupby("category")["amount"].sum().reset_index()
+
+fig6 = px.pie(
+    income_summary,
+    names="category",
+    values="amount",
+    title="💰 Income Breakdown by Category"
+)
+st.plotly_chart(fig6, use_container_width=True)
