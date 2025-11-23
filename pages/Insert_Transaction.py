@@ -72,4 +72,4 @@ with st.form("New Income"):
         except Exception as e:
             st.error(f"Error adding Income: {e}")
 
-    
+
